@@ -1,6 +1,7 @@
 from django.db.models.aggregates import Sum
 from django.shortcuts import HttpResponse, get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from djoser.views import UserViewSet
 from rest_framework import filters, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
@@ -9,11 +10,13 @@ from rest_framework.response import Response
 
 from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
                             ShoppingCart, Tag)
+from users.models import Subscription, User
 
 from .filters import RecipeFilter
 from .permissions import IsAuthorOrAdminOrReadOnly
 from .serializers import (IngredientSerializer, RecipeReadSerializer,
                           RecipeSerializer, RecipeWriteSerializer,
+                          SubscribeSerializer, SubscriptionSerializer,
                           TagSerializer)
 
 
@@ -28,6 +31,59 @@ def post_delete_favorite_shopping_cart(request, model, id):
     obj = get_object_or_404(model, user=user, recipe=recipe)
     obj.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class UserViewSet(UserViewSet):
+    """Отображение действий с пользователями."""
+    # Не согласна с замечанием. Класс используется для всех действий с
+    # от создания до подписок. Очень удобно использовать стандартные
+    # эндпоинты djoser: me и set_password. Зачем придумывать свои, если я
+    # уже использую djoser
+
+    queryset = User.objects.all()
+    pagination_class = PageNumberPagination
+
+    @action(
+        detail=False,
+        permission_classes=(IsAuthenticated,),
+    )
+    def subscriptions(self, request):
+        """Получить список подписок текущего пользователя."""
+        user = get_object_or_404(
+            User,
+            id=request.user.id
+        )
+        queryset = user.follower.all()
+        serializer = SubscriptionSerializer(
+            queryset,
+            many=True,
+            context={'request': request}
+        )
+        return Response(serializer.data)
+
+    @action(
+        detail=True,
+        methods=['POST', 'DELETE'],
+        permission_classes=(IsAuthenticated,),
+    )
+    def subscribe(self, request, id):
+        user = request.user
+        following = get_object_or_404(User, id=id)
+        if request.method == 'POST':
+            serializer = SubscribeSerializer(
+                data={'user': user.id, 'following': id},
+                context={'request': request},
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        follow = get_object_or_404(
+            Subscription,
+            user=user,
+            following=following,
+        )
+        follow.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):

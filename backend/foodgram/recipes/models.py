@@ -1,6 +1,10 @@
+import re
+
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.forms import ValidationError
 
+from foodgram.settings import MAX_LENGTH_FIELD
 from users.models import User
 
 
@@ -12,7 +16,7 @@ class Ingredient(models.Model):
         verbose_name='Единицы измерения',
     )
     name = models.CharField(
-        max_length=200,
+        max_length=MAX_LENGTH_FIELD,
         db_index=True,
         verbose_name='Название',
     )
@@ -30,12 +34,12 @@ class Tag(models.Model):
     """Класс, представляющий модель тэга."""
 
     color = models.CharField(
-        max_length=16,
+        max_length=7,
         unique=True,
         verbose_name='Цветовой HEX-код',
     )
     name = models.CharField(
-        max_length=150,
+        max_length=MAX_LENGTH_FIELD,
         unique=True, db_index=True,
         verbose_name='Название',
     )
@@ -52,6 +56,11 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 
+    def validate_color(self, color):
+        if re.search(r'^#(?:[0-9a-fA-F]{3}){1,2}$', color) is None:
+            raise ValidationError(
+                'Цвет должен быть в формте HEX')
+
 
 class Recipe(models.Model):
     """Класс, представляющий модель рецепта."""
@@ -62,13 +71,27 @@ class Recipe(models.Model):
         related_name='recipes',
         verbose_name='Автор',
     )
-    cooking_time = models.IntegerField(
+    cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время приготовления (в минутах)',
+        validators=[
+            MinValueValidator(
+                1,
+                message="Время приготовления не может быть меньше минуты"
+            )
+        ],
     )
     image = models.ImageField(
         upload_to='recipes/images/',
         verbose_name='Картинка',
     )
+    # Не понимаю, как я могу использовать для ingredients что-то другое?
+    # IngredientAmount у меня соделжит ссылку на Recipe - будет перекрестная
+    # ссылка, я даже в голове не могу представить, что будет при этом 
+    # происходить.
+    # У меня же through='IngredientAmount' позволяет как раз вводить 
+    # количество для ингредиентов, тем более в сериалайзерах используется
+    # нужный класс везде IngredientAmount.
+    # В админке я могу вводить количество ингридиента, благодяря этому
     ingredients = models.ManyToManyField(
         Ingredient,
         related_name='recipes',
@@ -101,11 +124,6 @@ class Recipe(models.Model):
     def __str__(self):
         return self.name
 
-    def validate_cooking_time(self, cooking_time):
-        if cooking_time <= 1:
-            raise ValidationError(
-                'Время приготовления не может быть меньше минуты.')
-
 
 class Favorite(models.Model):
     """Класс, представляющий модель избранных рецептов."""
@@ -117,7 +135,6 @@ class Favorite(models.Model):
     )
     recipe = models.ForeignKey(
         Recipe, on_delete=models.CASCADE,
-        related_name='favorites',
         verbose_name='Избранные рецепты',
     )
 
@@ -140,7 +157,6 @@ class ShoppingCart(models.Model):
     )
     recipe = models.ForeignKey(
         Recipe, on_delete=models.CASCADE,
-        related_name='shopping_cart',
         verbose_name='Рецепты к покупке',
     )
 
@@ -154,7 +170,9 @@ class ShoppingCart(models.Model):
 
 
 class IngredientAmount(models.Model):
-    amount = models.IntegerField(
+    """Класс, представляющий количество ингридиента в рецепте."""
+
+    amount = models.PositiveSmallIntegerField(
         verbose_name='Количество ингредиентов'
     )
     ingredient = models.ForeignKey(
@@ -170,6 +188,5 @@ class IngredientAmount(models.Model):
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
 
-
     def __str__(self):
-        return f'{self.ingredient} in {self.recipe}'
+        return f'{self.ingredient} в {self.recipe}'

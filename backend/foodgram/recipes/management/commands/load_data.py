@@ -1,7 +1,7 @@
 import csv
 
 from django.conf import settings
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 from recipes.models import Ingredient
 
@@ -13,13 +13,18 @@ class Command(BaseCommand):
         model_data = (
             (Ingredient, 'ingredients'),
         )
-        for model, file in model_data:
-            with open(
-                f'{settings.BASE_DIR}/static/data/{file}.csv',
-                'r',
-                encoding='utf-8'
-            ) as csv_file:
-                reader = csv.DictReader(csv_file)
-                model.objects.bulk_create(
-                    model(**data) for data in reader)
-        print('Load data completed.')
+        try:
+            for model, file in model_data:
+                with open(
+                    f'{settings.BASE_DIR}/static_backend/data/{file}.csv',
+                    'r',
+                    encoding='utf-8'
+                ) as csv_file:
+                    reader = csv.DictReader(csv_file)
+                    model.objects.bulk_create(
+                        objs=[model(**data) for data in reader],
+                        ignore_conflicts=True
+                    )
+            print('Load data completed.')
+        except FileNotFoundError:
+            raise CommandError('Файл не найден')
