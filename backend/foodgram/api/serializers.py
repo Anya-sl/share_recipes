@@ -1,6 +1,7 @@
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
+from core.validators import validate_username
 from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
                             ShoppingCart, Tag)
 from users.models import Subscription, User
@@ -28,6 +29,10 @@ class UserSerializer(serializers.ModelSerializer):
         if user.is_anonymous:
             return False
         return obj.following.filter(user=user).exists()
+
+    def validate_username(self, username):
+        validate_username(username)
+        return username
 
 
 class IngredientSerializer(serializers.ModelSerializer):

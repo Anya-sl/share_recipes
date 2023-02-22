@@ -1,9 +1,9 @@
 from django.contrib.auth.models import AbstractUser
-from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 
-from foodgram.settings import MAX_LENGTH_FIELD
+from foodgram.settings import MAX_LENGTH_FIELD, MAX_LENGTH_EMAIL
+from core.validators import validate_letter_feild, validate_username
 
 
 class User(AbstractUser):
@@ -13,27 +13,24 @@ class User(AbstractUser):
         verbose_name='Логин',
         max_length=MAX_LENGTH_FIELD,
         unique=True,
-        validators=[RegexValidator(r'^[\w.@+-]+$',
-                    ('Введенное имя пользователя недопустимо'))],
+        validators=[UnicodeUsernameValidator(), validate_username],
     )
     email = models.EmailField(
         verbose_name='Email',
-        max_length=254,
+        max_length=MAX_LENGTH_EMAIL,
         unique=True,
     )
     first_name = models.CharField(
         verbose_name='Имя',
         max_length=MAX_LENGTH_FIELD,
         blank=True, null=True,
-        validators=[RegexValidator(r'^[а-яА-ЯёЁa-zA-Z]+$',
-                    ('В поле "Имя" допускаются только буквы'))],
+        validators=[validate_letter_feild],
     )
     last_name = models.CharField(
         verbose_name='Фамилия',
         max_length=MAX_LENGTH_FIELD,
         blank=True, null=True,
-        validators=[RegexValidator(r'^[а-яА-ЯёЁa-zA-Z]+$',
-                    ('В поле "Фамилия" допускаются только буквы'))],
+        validators=[validate_letter_feild],
     )
 
     REQUIRED_FIELDS = ['first_name', 'last_name']
@@ -51,13 +48,6 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
-
-    def validate_username(username):
-        if username == 'me':
-            raise ValidationError(
-                'Имя пользователя "me" не допустимо'
-            )
-        return username
 
 
 class Subscription(models.Model):
