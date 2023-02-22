@@ -130,3 +130,12 @@ dmypy.json
 
 # .idea
 .idea
+
+# папки со статикой и медиа
+backend/media/
+backend/static/
+backend/recipes/images
+
+# vsc
+launch.json
+settings.json
