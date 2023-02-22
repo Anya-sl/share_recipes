@@ -1,8 +1,7 @@
+from core.validators import validate_letter_feild, validate_username
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
-
-from core.validators import validate_letter_feild, validate_username
 from foodgram.settings import MAX_LENGTH_EMAIL, MAX_LENGTH_FIELD
 
 
