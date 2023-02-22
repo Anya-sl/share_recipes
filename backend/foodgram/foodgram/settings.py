@@ -12,8 +12,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 
-from dotenv import load_dotenv
 from django.core.management.utils import get_random_secret_key
+from dotenv import load_dotenv
 
 load_dotenv()
 

@@ -2,9 +2,8 @@ from django.urls import include, path, re_path
 from djoser.views import UserViewSet
 from rest_framework.routers import DefaultRouter
 
-from .views import (IngredientViewSet, RecipeViewSet, TagViewSet,
-                    SubscribeViewSet)
-
+from .views import (IngredientViewSet, RecipeViewSet, SubscribeViewSet,
+                    TagViewSet)
 
 app_name = 'api'
 

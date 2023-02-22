@@ -1,6 +1,6 @@
 from django.db import models
 
-from core.validators import (validate_letter_feild, validate_hex,
+from core.validators import (validate_hex, validate_letter_feild,
                              validate_min_value)
 from foodgram.settings import MAX_LENGTH_FIELD
 from users.models import User

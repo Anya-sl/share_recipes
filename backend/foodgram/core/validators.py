@@ -1,5 +1,5 @@
-from django.core.validators import RegexValidator, MinValueValidator
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator, RegexValidator
 
 validate_letter_feild = RegexValidator(r'^[а-яА-ЯёЁa-zA-Z]+$',
                                        ('Поле может содержать только буквы'))
