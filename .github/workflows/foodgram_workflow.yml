@@ -65,8 +65,8 @@ jobs:
             mkdir -p foodgram-project-react
             cd foodgram-project-react
             sudo docker-compose stop
-            sudo docker pull {{ secrets.DOCKER_USERNAME }}/foodgram
-            sudo docker pull {{ secrets.DOCKER_USERNAME }}/foodgram_frontend
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend
             cd infra
             sudo docker-compose rm backend
       - name: docker-compose up
