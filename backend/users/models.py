@@ -1,7 +1,8 @@
-from core.validators import validate_letter_feild, validate_username
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
+
+from core.validators import validate_letter_field, validate_username
 from foodgram.settings import MAX_LENGTH_EMAIL, MAX_LENGTH_FIELD
 
 
@@ -23,13 +24,13 @@ class User(AbstractUser):
         verbose_name='Имя',
         max_length=MAX_LENGTH_FIELD,
         blank=True, null=True,
-        validators=[validate_letter_feild],
+        validators=[validate_letter_field],
     )
     last_name = models.CharField(
         verbose_name='Фамилия',
         max_length=MAX_LENGTH_FIELD,
         blank=True, null=True,
-        validators=[validate_letter_feild],
+        validators=[validate_letter_field],
     )
 
     REQUIRED_FIELDS = ['first_name', 'last_name']

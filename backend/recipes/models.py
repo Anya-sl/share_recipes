@@ -1,7 +1,8 @@
-from core.validators import (validate_hex, validate_letter_feild,
-                             validate_min_value)
 from django.db import models
-from foodgram.settings import MAX_LENGTH_FIELD
+
+from core.validators import (validate_hex, validate_letter_field,
+                             validate_min_value)
+from foodgram.settings import MAX_LENGTH_FIELD, MAX_LENGTH_HEX, MAX_LENGTH_UOM
 from users.models import User
 
 
@@ -9,14 +10,14 @@ class Ingredient(models.Model):
     """Класс, представляющий модель ингридиента."""
 
     measurement_unit = models.CharField(
-        max_length=16,
+        max_length=MAX_LENGTH_UOM,
         verbose_name='Единицы измерения',
     )
     name = models.CharField(
         max_length=MAX_LENGTH_FIELD,
         db_index=True,
         verbose_name='Название',
-        validators=[validate_letter_feild],
+        validators=[validate_letter_field],
     )
 
     class Meta:
@@ -32,7 +33,7 @@ class Tag(models.Model):
     """Класс, представляющий модель тэга."""
 
     color = models.CharField(
-        max_length=7,
+        max_length=MAX_LENGTH_HEX,
         unique=True,
         verbose_name='Цветовой HEX-код',
         validators=[validate_hex],
@@ -41,7 +42,7 @@ class Tag(models.Model):
         max_length=MAX_LENGTH_FIELD,
         unique=True, db_index=True,
         verbose_name='Название',
-        validators=[validate_letter_feild],
+        validators=[validate_letter_field],
     )
     slug = models.SlugField(
         unique=True, db_index=True,
@@ -74,16 +75,11 @@ class Recipe(models.Model):
         upload_to='recipes/images/',
         verbose_name='Картинка',
     )
-    ingredients = models.ForeignKey(
-        'IngredientAmount', on_delete=models.SET_NULL,
-        blank=True, null=True,
-        related_name='recipes',
-        verbose_name='Список ингредиентов',
-    )
     name = models.CharField(
-        max_length=200,
+        max_length=MAX_LENGTH_FIELD,
         db_index=True,
         verbose_name='Название',
+        validators=[validate_letter_field],
     )
     pub_date = models.DateTimeField(
         verbose_name='Дата публикации',
@@ -165,7 +161,7 @@ class IngredientAmount(models.Model):
     )
     recipe = models.ForeignKey(
         Recipe, on_delete=models.CASCADE,
-        related_name='+',
+        related_name='ingredients',
         verbose_name='Рецепт'
     )
 

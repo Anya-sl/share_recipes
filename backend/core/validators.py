@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, RegexValidator
 
-validate_letter_feild = RegexValidator(r'^[а-яА-ЯёЁa-zA-Z]+$',
+validate_letter_field = RegexValidator(r'^[а-яА-ЯёЁa-zA-Z]+$',
                                        ('Поле может содержать только буквы'))
 
 validate_hex = RegexValidator(r'^#([0-9a-fA-F]){3,6}$',
