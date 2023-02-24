@@ -7,16 +7,15 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
-                            ShoppingCart, Tag)
-from users.models import Subscription, User
-
 from .filters import RecipeFilter
 from .permissions import IsAuthorOrAdminOrReadOnly
 from .serializers import (IngredientSerializer, RecipeReadSerializer,
                           RecipeSerializer, RecipeWriteSerializer,
                           SubscribeSerializer, SubscriptionSerializer,
                           TagSerializer)
+from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
+                            ShoppingCart, Tag)
+from users.models import Subscription, User
 
 
 def post_delete_favorite_shopping_cart(request, model, id):
