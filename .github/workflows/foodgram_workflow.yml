@@ -86,10 +86,10 @@ jobs:
             echo SECRET_KEY="${{ secrets.SECRET_KEY }}" >> .env
             sudo docker-compose rm backend
             sudo docker-compose up -d --build
-            sudo docker compose exec backend python manage.py makemigrations --noinput
-            sudo docker compose exec backend python manage.py migrate --noinput
-            sudo docker compose exec backend python manage.py collectstatic --noinput
-            sudo docker compose exec backend python manage.py load_data
+            sudo docker-compose exec backend python manage.py makemigrations --noinput
+            sudo docker-compose exec backend python manage.py migrate --noinput
+            sudo docker-compose exec backend python manage.py collectstatic --noinput
+            sudo docker-compose exec backend python manage.py load_data
 
   send_message:
     runs-on: ubuntu-latest
