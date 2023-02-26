@@ -67,8 +67,6 @@ jobs:
             sudo docker-compose stop
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend
-            cd infra
-            sudo docker-compose rm backend
       - name: docker-compose up
         uses: appleboy/ssh-action@master
         with:
@@ -86,6 +84,7 @@ jobs:
             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
             echo SECRET_KEY="${{ secrets.SECRET_KEY }}" >> .env
+            sudo docker-compose rm backend
             sudo docker-compose up -d --build
             sudo docker compose exec backend python manage.py makemigrations --noinput
             sudo docker compose exec backend python manage.py migrate --noinput
