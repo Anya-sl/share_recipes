@@ -1,5 +1,5 @@
 # Спринт 14 для Yandex.Praktikum - проект Foodgram
-![Yamdb Workflow Status](https://github.com/Anya-sl/foodgram-project-react/actions/workflows/yamdb_workflow.yml/badge.svg?branch=master&event=push)
+![Foodgram Workflow Status](https://github.com/Anya-sl/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg?branch=master&event=push)
 
 ## Описание проекта
 «Продуктовый помощник»
