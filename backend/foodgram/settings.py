@@ -28,7 +28,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv('SECRET_KEY') or get_random_secret_key()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     'localhost',
@@ -99,9 +99,9 @@ DATABASES = {
     'default': {
         'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
         'NAME': os.getenv('DB_NAME', default='postgres'),
-        'USER': os.getenv('POSTGRES_USER', default='postgres'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgres'),
-        'HOST': os.getenv('DB_HOST', default='db'),
+        'USER': os.getenv('POSTGRES_USER', default='anyasl'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='vyhuhol'),
+        'HOST': os.getenv('DB_HOST', default='localhost'),
         'PORT': os.getenv('DB_PORT', default=5432),
     }
 }

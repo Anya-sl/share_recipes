@@ -1,6 +1,12 @@
 from django.contrib import admin
 
-from .models import Ingredient, Recipe, Tag
+from .models import Ingredient, IngredientAmount, Recipe, Tag
+
+
+class IngredientsInline(admin.TabularInline):
+    """Включённая структура ингредиентов в рецепте."""
+
+    model = IngredientAmount
 
 
 class IngredientAdmin(admin.ModelAdmin):
@@ -18,6 +24,7 @@ class RecipeAdmin(admin.ModelAdmin):
     list_display = ('id', 'author', 'name', 'favorites_count')
     search_fields = ('name',)
     list_filter = ('author', 'name', 'tags')
+    inlines = [IngredientsInline]
     empty_value_display = '-пусто-'
 
     def favorites_count(self, obj):

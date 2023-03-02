@@ -3,7 +3,7 @@ import csv
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
-from recipes.models import Ingredient
+from recipes.models import Ingredient, Tag
 
 
 class Command(BaseCommand):
@@ -12,11 +12,12 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         model_data = (
             (Ingredient, 'ingredients'),
+            (Tag, 'tags')
         )
         try:
             for model, file in model_data:
                 with open(
-                    f'{settings.BASE_DIR}/static_backend/data/{file}.csv',
+                    f'{settings.BASE_DIR}/static/data/{file}.csv',
                     'r',
                     encoding='utf-8'
                 ) as csv_file:
