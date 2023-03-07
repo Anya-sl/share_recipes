@@ -32,9 +32,11 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
+    '130.193.49.64'
     '*',
 ]
 
+CSFR_TRUSTED_ORIGINES = ['http://130.193.49.64']
 
 # Application definition
 
