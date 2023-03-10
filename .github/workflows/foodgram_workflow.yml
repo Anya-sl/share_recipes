@@ -88,6 +88,9 @@ jobs:
             sudo docker-compose rm backend
             sudo docker-compose up -d --build
             sudo docker image prune --force
+            sudo docker-compose exec backend python manage.py makemigrations --noinput
+            sudo docker compose exec backend python manage.py migrate --noinput
+
 
   send_message:
     runs-on: ubuntu-latest
