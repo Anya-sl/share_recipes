@@ -36,7 +36,7 @@ ALLOWED_HOSTS = [
     '*',
 ]
 
-CSFR_TRUSTED_ORIGINES = ['http://130.193.49.64']
+CSFR_TRUSTED_ORIGINS = ['http://130.193.49.64']
 
 # Application definition
 
