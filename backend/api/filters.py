@@ -2,7 +2,7 @@ from django_filters import ModelMultipleChoiceFilter
 from django_filters.rest_framework import FilterSet, filters
 from rest_framework.filters import SearchFilter
 
-from recipes.models import Favorite, Recipe, Tag
+from recipes.models import Favorite, Recipe, ShoppingCart, Tag
 
 
 class IngredientsFilter(SearchFilter):
@@ -34,6 +34,6 @@ class RecipeFilter(FilterSet):
     def filter_is_in_shopping_cart(self, queryset, name, value):
         if not value:
             return queryset
-        shoppingcart_recipes_id = Favorite.objects.filter(
+        shoppingcart_recipes_id = ShoppingCart.objects.filter(
             user=self.request.user.id).values_list("recipe__id", flat=True)
         return queryset.filter(id__in=shoppingcart_recipes_id)
