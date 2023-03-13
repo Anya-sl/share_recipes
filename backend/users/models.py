@@ -33,7 +33,7 @@ class User(AbstractUser):
         validators=[validate_letter_field],
     )
 
-    REQUIRED_FIELDS = ['first_name', 'last_name']
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'email']
 
     class Meta:
         verbose_name = 'Пользователь'
