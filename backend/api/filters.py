@@ -8,6 +8,7 @@ from recipes.models import Favorite, Recipe, Tag
 class IngredientsFilter(SearchFilter):
     search_param = 'name'
 
+
 class RecipeFilter(FilterSet):
     tags = ModelMultipleChoiceFilter(
         field_name='tags__slug',
