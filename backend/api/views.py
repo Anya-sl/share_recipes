@@ -1,13 +1,13 @@
 from django.db.models.aggregates import Sum
 from django.shortcuts import HttpResponse, get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, permissions, status, viewsets
+from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from .filters import RecipeFilter
+from .filters import IngredientsFilter, RecipeFilter
+from .pagination import CustomPagination
 from .permissions import IsAuthorOrAdminOrReadOnly
 from .serializers import (IngredientSerializer, RecipeReadSerializer,
                           RecipeSerializer, RecipeWriteSerializer,
@@ -34,7 +34,7 @@ def post_delete_favorite_shopping_cart(request, model, id):
 class SubscribeViewSet(viewsets.ModelViewSet):
 
     queryset = User.objects.all()
-    pagination_class = PageNumberPagination
+    pagination_class = CustomPagination
 
     @action(
         detail=False,
@@ -81,23 +81,21 @@ class SubscribeViewSet(viewsets.ModelViewSet):
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
-    pagination_class = None
     permission_classes = (AllowAny,)
     serializer_class = IngredientSerializer
-    filter_backends = (filters.SearchFilter,)
+    filter_backends = (IngredientsFilter,)
     search_fields = ('^name',)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
-    pagination_class = None
     permission_classes = (AllowAny,)
     serializer_class = TagSerializer
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    pagination_class = PageNumberPagination
+    pagination_class = CustomPagination
     permission_classes = (IsAuthorOrAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
@@ -112,7 +110,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         methods=['post', 'delete'],
         url_path=r'(?P<id>[\d]+)/favorite',
         url_name='favorite',
-        pagination_class=None,
         permission_classes=[IsAuthenticated]
     )
     def favorite(self, request, id):
@@ -124,7 +121,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         methods=['post', 'delete'],
         url_path=r'(?P<id>[\d]+)/shopping_cart',
         url_name='shopping_cart',
-        pagination_class=None,
         permission_classes=[IsAuthenticated]
     )
     def shopping_cart(self, request, id):
@@ -133,7 +129,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(
         detail=False,
-        pagination_class=None,
         permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request):
