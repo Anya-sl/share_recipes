@@ -39,6 +39,8 @@ class SubscribeViewSet(viewsets.ModelViewSet):
     @action(
         detail=False,
         permission_classes=(IsAuthenticated,),
+        url_path=r'users/subscriptions',
+
     )
     def subscriptions(self, request):
         """Получить список подписок текущего пользователя."""
@@ -58,6 +60,8 @@ class SubscribeViewSet(viewsets.ModelViewSet):
         detail=True,
         methods=['POST', 'DELETE'],
         permission_classes=(IsAuthenticated,),
+        url_path=r'users/(?P<user_id>\d+)/subscribe',
+
     )
     def subscribe(self, request, id):
         user = request.user
