@@ -18,7 +18,7 @@ router.register(
 )
 router.register(
     r'users/subscriptions',
-    SubscriptionViewSet, basename='subscriptions' 
+    SubscriptionViewSet, basename='subscriptions'
 )
 urlpatterns = [
     path('', include(router.urls)),
