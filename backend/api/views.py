@@ -34,15 +34,36 @@ def post_delete_favorite_shopping_cart(request, model, id):
 class SubscribeViewSet(viewsets.ModelViewSet):
 
     queryset = User.objects.all()
-    pagination_class = CustomPagination
+    permission_classes = (IsAuthenticated,)
 
-    @action(
-        detail=False,
-        permission_classes=(IsAuthenticated,),
-        url_path=r'users/subscriptions',
+    def create(self, request, *args, **kwargs):
+        """Подписаться на автора."""
+        serializer = SubscribeSerializer(
+            data={'user': request.user.id,
+                  'following': self.kwargs.get('user_id')},
+            context={'request': request},
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    )
-    def subscriptions(self, request):
+    def destroy(self, request, *args, **kwargs):
+        """Отписаться от автора."""
+        follow = get_object_or_404(
+            Subscription,
+            user=request.user,
+            following=get_object_or_404(User, id=self.kwargs.get('user_id')),
+        )
+        follow.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class SubscriptionViewSet(viewsets.ModelViewSet):
+
+    queryset = User.objects.all()
+    permission_classes = (IsAuthenticated,)
+
+    def list(self, request):
         """Получить список подписок текущего пользователя."""
         user = get_object_or_404(
             User,
@@ -55,32 +76,6 @@ class SubscribeViewSet(viewsets.ModelViewSet):
             context={'request': request}
         )
         return Response(serializer.data)
-
-    @action(
-        detail=True,
-        methods=['POST', 'DELETE'],
-        permission_classes=(IsAuthenticated,),
-        url_path=r'users/(?P<user_id>\d+)/subscribe',
-
-    )
-    def subscribe(self, request, id):
-        user = request.user
-        following = get_object_or_404(User, id=id)
-        if request.method == 'POST':
-            serializer = SubscribeSerializer(
-                data={'user': user.id, 'following': id},
-                context={'request': request},
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        follow = get_object_or_404(
-            Subscription,
-            user=user,
-            following=following,
-        )
-        follow.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):

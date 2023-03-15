@@ -3,7 +3,7 @@ from djoser.views import UserViewSet
 from rest_framework.routers import DefaultRouter
 
 from .views import (IngredientViewSet, RecipeViewSet, SubscribeViewSet,
-                    TagViewSet)
+                    SubscriptionViewSet, TagViewSet)
 
 app_name = 'api'
 
@@ -18,7 +18,7 @@ router.register(
 )
 router.register(
     r'users/subscriptions',
-    SubscribeViewSet, basename='subscriptions'
+    SubscriptionViewSet, basename='subscriptions'
 )
 urlpatterns = [
     path('', include(router.urls)),
