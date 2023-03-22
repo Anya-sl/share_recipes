@@ -169,7 +169,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     """Сериализатор для отображения подписок."""
 
     email = serializers.ReadOnlyField()
-    id = serializers.ReadOnlyField() 
+    id = serializers.ReadOnlyField()
     username = serializers.ReadOnlyField()
     first_name = serializers.ReadOnlyField()
     last_name = serializers.ReadOnlyField()
