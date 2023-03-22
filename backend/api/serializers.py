@@ -143,25 +143,37 @@ class RecipeWriteSerializer(RecipeReadSerializer):
         return recipe
 
     def update(self, instance, validated_data):
+        instance.name = validated_data.pop('name', instance.name)
         instance.cooking_time = validated_data.pop(
             'cooking_time',
             instance.cooking_time,
         )
         instance.image = validated_data.pop('image', instance.image)
-        instance.ingredients.clear()
         ingredients = validated_data.pop('ingredients')
+        IngredientAmount.objects.filter(recipe=instance).delete()
         self.create_ingredients(instance, ingredients)
-        instance.name = validated_data.pop('name', instance.name)
-        instance.tags.clear()
         tags = validated_data.pop('tags')
         instance.tags.set(tags)
         instance.text = validated_data.pop('text', instance.text)
         return super().update(instance, validated_data)
 
+    def to_representation(self, instance):
+        serializer = RecipeReadSerializer(
+            instance,
+            context={'request': self.context.get('request')}
+        )
+        return serializer.data
 
-class SubscriptionSerializer(UserSerializer):
+
+class SubscriptionSerializer(serializers.ModelSerializer):
     """Сериализатор для отображения подписок."""
 
+    email = serializers.ReadOnlyField()
+    id = serializers.ReadOnlyField() 
+    username = serializers.ReadOnlyField()
+    first_name = serializers.ReadOnlyField()
+    last_name = serializers.ReadOnlyField()
+    is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField(read_only=True)
     recipes_count = serializers.IntegerField(
         source='recipes.count',
@@ -169,9 +181,16 @@ class SubscriptionSerializer(UserSerializer):
     )
 
     class Meta:
-        model = User
+        model = Subscription
         fields = ('email', 'id', 'username', 'first_name', 'last_name',
                   'is_subscribed', 'recipes', 'recipes_count')
+
+    def get_is_subscribed(self, obj):
+        """Определяет, подписан ли пользователь на авторов."""
+        user = self.context.get('request').user
+        if user.is_anonymous:
+            return False
+        return user.follower.filter(following=obj).exists()
 
     def get_recipes(self, obj):
         request = self.context.get('request')

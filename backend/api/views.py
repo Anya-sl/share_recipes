@@ -36,6 +36,7 @@ class SubscribeViewSet(viewsets.ModelViewSet):
 
     queryset = User.objects.all()
     permission_classes = (IsAuthenticated,)
+    serializer_class = SubscribeSerializer
 
     def create(self, request, *args, **kwargs):
         """Подписаться на автора."""
@@ -48,12 +49,12 @@ class SubscribeViewSet(viewsets.ModelViewSet):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def destroy(self, request, *args, **kwargs):
+    def delete(self, request, user_id):
         """Отписаться от автора."""
         follow = get_object_or_404(
             Subscription,
             user=request.user,
-            following=get_object_or_404(User, id=self.kwargs.get('user_id')),
+            following=get_object_or_404(User, id=user_id),
         )
         follow.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -61,22 +62,13 @@ class SubscribeViewSet(viewsets.ModelViewSet):
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
 
-    queryset = User.objects.all()
+    pagination_class = CustomPagination
     permission_classes = (IsAuthenticated,)
+    serializer_class = SubscriptionSerializer
 
-    def list(self, request):
+    def get_queryset(self):
         """Получить список подписок текущего пользователя."""
-        user = get_object_or_404(
-            User,
-            id=request.user.id
-        )
-        queryset = user.follower.all()
-        serializer = SubscriptionSerializer(
-            queryset,
-            many=True,
-            context={'request': request}
-        )
-        return Response(serializer.data)
+        return User.objects.filter(following__user=self.request.user)
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):

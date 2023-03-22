@@ -16,11 +16,13 @@ router.register(
     r'users/(?P<user_id>\d+)/subscribe',
     SubscribeViewSet, basename='subscribe'
 )
-router.register(
-    r'users/subscriptions',
-    SubscriptionViewSet, basename='subscriptions'
-)
+
 urlpatterns = [
+    path(
+        'users/subscriptions/',
+        SubscriptionViewSet .as_view({'get': 'list'}),
+        name='subscriptions'
+    ),
     path('', include(router.urls)),
     path('', include('djoser.urls')),
     re_path(r'^auth/', include('djoser.urls.authtoken')),
