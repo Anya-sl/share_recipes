@@ -93,7 +93,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         source='ingredientamount_set',
         read_only=True
     )
-    tags = TagSerializer(many=True)
+    tags = TagSerializer(many=True, read_only=True,)
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 
@@ -127,7 +127,7 @@ class RecipeWriteSerializer(RecipeReadSerializer):
 
     def create_ingredients(self, ingredients, recipe):
         IngredientAmount.objects.bulk_create([IngredientAmount(
-            ingredient=ingredient['ingredient'],
+            ingredient=ingredient['id'],
             recipe=recipe,
             amount=ingredient['amount']
         ) for ingredient in ingredients])
