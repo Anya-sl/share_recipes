@@ -54,7 +54,7 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = IngredientAmount
-        fields = ('id', 'ingredient', 'recipe', 'amount')
+        fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
 class AddToIngredientAmountSerializer(serializers.ModelSerializer):
@@ -88,11 +88,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     """Сериализатор для рецептов (только для чтения)."""
 
     author = UserSerializer(read_only=True)
-    ingredients = IngredientAmountSerializer(
-        many=True,
-        source='ingredientamount_set',
-        read_only=True
-    )
+    ingredients = IngredientAmountSerializer(many=True, read_only=True)
     tags = TagSerializer(many=True, read_only=True,)
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
