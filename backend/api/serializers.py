@@ -147,7 +147,7 @@ class RecipeWriteSerializer(RecipeReadSerializer):
         instance.image = validated_data.pop('image', instance.image)
         ingredients = validated_data.pop('ingredients')
         IngredientAmount.objects.filter(recipe=instance).delete()
-        self.create_ingredients(instance, ingredients)
+        self.create_ingredients(ingredients, instance)
         tags = validated_data.pop('tags')
         instance.tags.set(tags)
         instance.text = validated_data.pop('text', instance.text)
