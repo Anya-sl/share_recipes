@@ -125,9 +125,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def download_shopping_cart(self, request):
         """Скачать список с ингредиентами."""
-        user = request.user
+        shoppingcart_recipes_id = ShoppingCart.objects.filter(
+            user=self.request.user.id).values_list("recipe__id", flat=True)
         ingredients = IngredientAmount.objects.filter(
-            recipe__shopping_cart__user=user
+            recipe_id__in=shoppingcart_recipes_id
         ).order_by(
             'ingredient__name'
         ).values(
