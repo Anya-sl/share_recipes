@@ -9,16 +9,8 @@ validate_hex = RegexValidator(r'^#([0-9a-fA-F]){3,6}$',
 
 validate_min_value = MinValueValidator(
     1,
-    message="Время приготовления не может быть меньше минуты"
+    message="Значение не может быть меньше 1"
 )
-
-
-def validate_amount(value):
-    if value < 1:
-        raise ValidationError(
-            'Количество не может быть меньше 1'
-        )
-    return value
 
 
 def validate_username(value):
