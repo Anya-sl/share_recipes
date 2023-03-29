@@ -23,7 +23,7 @@ def validate_username(value):
 
 def validate_ingredients(ingredients):
     for ingredient in ingredients:
-            if int(ingredient.get('amount')) < 1:
-                raise ValidationError(
-                    'Количество ингредиента должно быть больше 1')
+        if int(ingredient.get('amount')) < 1:
+            raise ValidationError(
+                'Количество ингредиента должно быть больше 1')
     return ingredients
