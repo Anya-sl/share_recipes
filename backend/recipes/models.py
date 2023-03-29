@@ -1,7 +1,7 @@
 from django.db import models
 
-from core.validators import (validate_hex, validate_letter_field,
-                             validate_min_value, validate_amount)
+from core.validators import (validate_amount, validate_hex,
+                             validate_letter_field, validate_min_value)
 from foodgram.settings import MAX_LENGTH_FIELD, MAX_LENGTH_HEX, MAX_LENGTH_UOM
 from users.models import User
 
