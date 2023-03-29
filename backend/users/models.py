@@ -12,7 +12,6 @@ class User(AbstractUser):
     username = models.CharField(
         verbose_name='Логин',
         max_length=MAX_LENGTH_FIELD,
-        blank=True, null=True,
         unique=True,
         validators=[UnicodeUsernameValidator(), validate_username],
     )
@@ -24,13 +23,11 @@ class User(AbstractUser):
     first_name = models.CharField(
         verbose_name='Имя',
         max_length=MAX_LENGTH_FIELD,
-        blank=True, null=True,
         validators=[validate_letter_field],
     )
     last_name = models.CharField(
         verbose_name='Фамилия',
         max_length=MAX_LENGTH_FIELD,
-        blank=True, null=True,
         validators=[validate_letter_field],
     )
 

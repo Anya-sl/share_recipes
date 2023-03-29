@@ -1,7 +1,7 @@
 from django.db import models
 
 from core.validators import (validate_hex, validate_letter_field,
-                             validate_min_value)
+                             validate_min_value, validate_amount)
 from foodgram.settings import MAX_LENGTH_FIELD, MAX_LENGTH_HEX, MAX_LENGTH_UOM
 from users.models import User
 
@@ -159,7 +159,8 @@ class IngredientAmount(models.Model):
     """Класс, представляющий количество ингридиента в рецепте."""
 
     amount = models.PositiveSmallIntegerField(
-        verbose_name='Количество ингредиентов'
+        verbose_name='Количество ингредиентов',
+        validators=[validate_amount],
     )
     ingredient = models.ForeignKey(
         Ingredient, on_delete=models.CASCADE,

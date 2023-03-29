@@ -7,6 +7,7 @@ class IngredientsInline(admin.TabularInline):
     """Включённая структура ингредиентов в рецепте."""
 
     model = IngredientAmount
+    min_num = 1
 
 
 class IngredientAdmin(admin.ModelAdmin):

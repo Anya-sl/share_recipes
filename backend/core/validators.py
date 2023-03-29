@@ -13,6 +13,14 @@ validate_min_value = MinValueValidator(
 )
 
 
+def validate_amount(value):
+    if value < 1:
+        raise ValidationError(
+            'Количество не может быть меньше 1'
+        )
+    return value
+
+
 def validate_username(value):
     if value.lower == 'me':
         raise ValidationError(
