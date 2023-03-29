@@ -13,20 +13,6 @@ validate_min_value = MinValueValidator(
 )
 
 
-def validate_amount(amount):
-    if int(amount) < 1:
-        raise ValidationError('Количество ингредиента должно быть больше 1')
-    return amount
-
-
-def validate_ingredients(ingredients):
-    for ingredient in ingredients:
-        if int(ingredient.get('amount')) < 1:
-            raise ValidationError(
-                'Количество ингредиента должно быть больше 1')
-    return ingredients
-
-
 def validate_username(value):
     if value.lower == 'me':
         raise ValidationError('Имя пользователя "me" не допустимо')

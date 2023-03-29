@@ -1,8 +1,7 @@
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
-from core.validators import (validate_amount, validate_ingredients,
-                             validate_username)
+from core.validators import validate_min_value, validate_username
 from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
                             ShoppingCart, Tag)
 from users.models import Subscription, User
@@ -62,14 +61,11 @@ class AddToIngredientAmountSerializer(serializers.ModelSerializer):
     """Сериализатор для добавления количества ингредиентов."""
 
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
-    amount = serializers.IntegerField()
+    amount = serializers.IntegerField(validators=(validate_min_value,))
 
     class Meta:
         model = IngredientAmount
         fields = ('amount', 'id')
-
-    def validate_amount(self, amount):
-        validate_amount(amount)
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -124,9 +120,6 @@ class RecipeWriteSerializer(RecipeReadSerializer):
         model = Recipe
         fields = ('id', 'tags', 'author', 'ingredients', 'name', 'image',
                   'text', 'cooking_time')
-
-    def validate_ingredients(self, ingredients):
-        validate_ingredients(ingredients)
 
     def create_ingredients(self, ingredients, recipe):
         IngredientAmount.objects.bulk_create([IngredientAmount(
